@@ -26,37 +26,67 @@ class Arvore_AVL{
                     dir=NULL;
                 }
         };
+        //  VAO GIRAR MEUS NOS 😥😣😣
+        No* rotacaoDir(No* no){
+            No* novoNo = no->esq;
+            no->esq = novoNo->dir;
+            novoNo->dir = no;
+            no->altura = 1 + maiorValor(altura(no->esq), altura(no->dir));
+            novoNo->altura = 1 + maiorValor(altura(novoNo->esq), altura(novoNo->dir));
+            return novoNo;
+        }
+
+        No * rotacaoEsq(No * no){
+            No * novoNo = no->dir;
+            no->dir = novoNo->esq;
+            novoNo->esq = no;
+            no->altura = 1 + maiorValor(altura(no->esq), altura(no->dir));
+            novoNo->altura = 1+maiorValor(altura(novoNo->esq), altura(novoNo->dir));
+            return novoNo;
+        }
 
         No* raiz = NULL;
         void inserir(int chave){
+            printf("\nVoce inseriu %d na arvore", chave);
             raiz = inserirNaArvore(raiz, chave);
         };
 
         No* inserirNaArvore(No* no, int chave){
             // Se for NULO = arvore vazia crio um novo No
             if (no == NULL){no = new No(chave);}
+
             // Se for MENOR que o no atual, insiro (recursao) no filho a esquerda 
             else if (chave < no->chave){
                 no->esq = inserirNaArvore(no->esq, chave);}
+
             // Se for MAIOR que o no atual, insiro (recursao) no filho a direita
             else if (chave > no->chave){
                 no->dir = inserirNaArvore(no->dir, chave);}
 
-            // Armazenando a altura do No e o balanceamento da arvore
+            // Armazenando Altura e Fator de Desequilibrio da inserção atual
             no->altura = 1 + maiorValor(altura(no->esq), altura(no->dir));
             int desequilibrio = altura(no->esq) - altura(no->dir);
-
-            // 🔥🔥 AVLZAMENTO - BALANCEIAÇÃO 🔥🔥
-            // Correção do desiquilibrio para balancear a arvore (deseq entre -1 e 1)
-            if (desequilibrio>1){
-                if(chave < no->esq->chave){
+            //  🔥🔥 AVLZAMENTO 🔥🔥
+            //  Correção do desiquilibrio através de rotacoes para balancear a arvore (deseq entre -1 e 1)
+            if (desequilibrio > 1){
+                if(chave < no->esq->chave){ // comparando com o descendente esquerdo
+                    printf("\nInsercao do %d causou desequilibrio... RSD executada.", chave);
                     return rotacaoDir(no); // Rotação direita
                 }else{
+                    printf("\nInsercao do %d causou desequilibrio... RDE executada.", chave);
                     no->esq = rotacaoEsq(no->esq); // Rotacao dupla a esquerda
                     return rotacaoDir(no);
                 }
+            }else if (desequilibrio < -1){
+                if (chave < no->dir->chave){ // comparando com o descendente a direita
+                    printf("\nInsercao do %d causou desequilibrio. RSE executada", chave);
+                    return rotacaoEsq(no);
+                }else{
+                    printf("\nInsercao do %d causou desequilibrio. RDD executada", chave);
+                    no->dir = rotacaoDir(no); // Rotacao dupla a direita
+                    return rotacaoEsq(no);
+                }
             }
-
             return no;
         }
 
@@ -86,6 +116,8 @@ int main(){
     arv.inserir(9);
     arv.inserir(1);
     arv.inserir(7);
-    cout << "Percorrendo em ordem" << endl;
+    arv.inserir(8);
+    arv.inserir(10);
+    cout << "\nPercorrendo em ordem" << endl;
     arv.emOrdem(arv.raiz);
 }
