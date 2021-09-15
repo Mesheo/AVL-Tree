@@ -68,29 +68,36 @@ class Arvore_AVL{
             raiz = inserirNaArvore(raiz, chave);
         };
 
-        No* inserirNaArvore(No* no, int chave){
+        No* inserirNaArvore(No* raiz, int chave){
             // Se for NULO = arvore vazia crio um novo No
-            if (no == NULL){no = new No(chave);}
+            if (raiz == NULL){raiz = new No(chave);}
 
-            // Se for MENOR que o no atual, insiro (recursao) no filho a esquerda 
-            else if (chave < no->chave){
-                no->esq = inserirNaArvore(no->esq, chave);}
+            // Se for MENOR que a raiz atual, insiro (recursao) no filho a esquerda 
+            else if (chave < raiz->chave){
+                raiz->esq = inserirNaArvore(raiz->esq, chave);}
 
-            // Se for MAIOR que o no atual, insiro (recursao) no filho a direita
-            else if (chave > no->chave){
-                no->dir = inserirNaArvore(no->dir, chave);}
+            // Se for MAIOR que a raiz atual, insiro (recursao) no filho a direita
+            else if (chave > raiz->chave){
+                raiz->dir = inserirNaArvore(raiz->dir, chave);}
 
         
-            // //  🔥🔥 AVLZAMENTO 🔥🔥
-            if (fator_balanceamento(no) < -1){ //subArvore a direita ta maior
-                if (fator_balanceamento(no->dir) < 0){ //subArvore direita tambem maior, portanto uma reta
-                    printf("\nReta tendendo ao lado direito... RSE executada no %d(%d)", no->chave, fator_balanceamento(no));
-                    no = rotacaoEsq(no);
+            //  🔥🔥 AVLZAMENTO 🔥🔥
+            // Para uma arovre ser AVL seus nós precisam ter fator de balanceamento entre -1 e 1
+            
+            // caso de ROTAÇAO SIMPLES A ESQUERDA
+            if (fator_balanceamento(raiz) < -1){ //desbalanceamento pra direita
+                if (fator_balanceamento(raiz->dir) <= -1){ //subArvore direita tambem desbalanceada nessa direcao
+                    printf("\nReta tendendo ao lado direito... RSE executada no %d(%d)", raiz->chave, fator_balanceamento(raiz));
+                    raiz = rotacaoEsq(raiz);
                 } 
             }
-            if (fator_balanceamento(no) == 2){
-                printf("\nReta tendendo ao lado esquerdo... RSD executada no %d(%d)", no->chave, fator_balanceamento(no));
-                no = rotacaoDir(no);
+                
+            // CASO DE ROTACAO SIMPLES A DIREITA
+            if (fator_balanceamento(raiz) > 1){ // desbalanceamento pra esquerda
+                if (fator_balanceamento(raiz->esq) >= 1){ //subArvore esquerda tambem desbalanceada nessa direcao
+                    printf("\nReta tendendo ao lado esquerdo... RSD executada no %d(%d)", raiz->chave, fator_balanceamento(raiz));
+                    raiz = rotacaoDir(raiz);
+                }
             }
             // else if (desequilibrio > 1){ //subArvore a esquerda ta maior
             //     if (fator_balanceamento(no->dir) > 0){ //subArvore esquerda tambem maior, portanto uma reta
@@ -117,7 +124,7 @@ class Arvore_AVL{
             //         return rotacaoEsq(no);
             //     }
             // }
-            return no;
+            return raiz;
         }
 
         void emOrdem(No* no){
@@ -153,6 +160,7 @@ int main(){
     arv.inserir(49);
     arv.inserir(10);
     arv.inserir(8);
+    arv.inserir(49);
 
     cout << "\n\nPercorrendo em ordem" << endl;
     arv.emOrdem(arv.raiz);
