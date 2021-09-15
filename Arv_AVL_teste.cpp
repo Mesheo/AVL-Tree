@@ -15,7 +15,6 @@ class Arvore_AVL{
         class No{
             public:
                 int altura;
-                int fator_balanceamento;
                 int chave;
                 No *esq;
                 No *dir;
@@ -23,12 +22,28 @@ class Arvore_AVL{
                 No(int chave){
                     this->chave=chave;
                     altura = 1;
-                    this->fator_balanceamento = (this->esq->altura) - (this->dir->altura);
                     esq=NULL;
                     dir=NULL;
                 }
         };
         //  VAO GIRAR MEUS NOS 😥😣😣
+        void RotacaoRR(No* no){
+            No* novoNo;
+            novoNo = no->esq;
+            novoNo->dir = no;
+            no->altura = maiorValor(altura(no->esq), altura(no->dir));
+            no = novoNo;
+        }
+
+        void RotacaoLL(No* raiz){
+            No* no;
+            no = raiz->dir;
+            raiz->dir = no->esq;
+            no->esq = raiz;
+            raiz->altura = maiorValor(altura(raiz->esq), altura(raiz->dir));
+            raiz = no;
+        }
+
         No* rotacaoDir(No* no){
             No* novoNo = no->esq;
             no->esq = novoNo->dir;
@@ -38,7 +53,7 @@ class Arvore_AVL{
             return novoNo;
         }
 
-        No * rotacaoEsq(No * no){
+        No* rotacaoEsq(No * no){
             No * novoNo = no->dir;
             no->dir = novoNo->esq;
             novoNo->esq = no;
@@ -55,11 +70,9 @@ class Arvore_AVL{
 
         No* inserirNaArvore(No* no, int chave){
             // Se for NULO = arvore vazia crio um novo No
-            if (no == NULL){
-                no = new No(chave);
-                }
+            if (no == NULL){no = new No(chave);}
 
-            // Se for MENOR qssue o no atual, insiro (recursao) no filho a esquerda 
+            // Se for MENOR que o no atual, insiro (recursao) no filho a esquerda 
             else if (chave < no->chave){
                 no->esq = inserirNaArvore(no->esq, chave);}
 
@@ -69,37 +82,40 @@ class Arvore_AVL{
 
             // Armazenando Altura e Fator de Desequilibrio da inserção atual
             no->altura = 1 + maiorValor(altura(no->esq), altura(no->dir));
-            int fator_balanceamento = (no->esq->altura) - (no->dir->altura);
-            printf("\nAltura do no %d = %d", no->chave, no->altura);
-            printf("\nFB do %d: %d", no->chave, no->fator_balanceamento);
-            //  🔥🔥 AVLZAMENTO 🔥🔥
-            //  Correção do desiquilibrio através de rotacoes para balancear a arvore (deseq entre -1 e 1)
-            if (fator_balanceamento > 1){
-                if(chave < no->esq->chave){ // comparando com o descendente esquerdo
-                    printf("\nInsercao do %d causou desequilibrio... RSD executada.", chave);
-                    return rotacaoDir(no); // Rotação direita
-                }else{
-                    printf("\nInsercao do %d causou desequilibrio... RDE executada.", chave);
-                    no->esq = rotacaoEsq(no->esq); // Rotacao dupla a esquerda
-                    return rotacaoDir(no);
-                }
-            }else if (fator_balanceamento < -1){
-                if (chave < no->dir->chave){ // comparando com o descendente a direita
-                    printf("\nInsercao do %d causou fator_balanceamento. RSE executada", chave);
-                    return rotacaoEsq(no);
-                }else{
-                    printf("\nInsercao do %d causou desequilibrio. RDD executada", chave);
-                    no->dir = rotacaoDir(no); // Rotacao dupla a direita
-                    return rotacaoEsq(no);
-                }
+            int desequilibrio = fb(no);
+            // //  🔥🔥 AVLZAMENTO 🔥🔥
+            if (desequilibrio < -1){ //subArvore a direita ta maior
+                if (fb(no->dir) < 0){ //subArvore direita tambem maior, portanto uma reta
+                    printf("\nArvore desequilibrada, RSE executada no %d(%d)", no->chave, fb(no));
+                    no = rotacaoEsq(no);
+                } 
             }
+            // if (desequilibrio > 1){
+            //     if(chave < no->esq->chave){ // comparando com o descendente esquerdo
+            //         printf("\nInsercao do %d causou desequilibrio... RSD executada.", chave);
+            //         return rotacaoDir(no); // Rotação direita
+            //     }else{
+            //         printf("\nInsercao do %d causou desequilibrio... RDE executada.", chave);
+            //         no->esq = rotacaoEsq(no->esq); // Rotacao dupla a esquerda
+            //         return rotacaoDir(no);
+            //     }
+            // }else if (desequilibrio < -1){
+            //     if (chave < no->dir->chave){ // comparando com o descendente a direita
+            //         printf("\nInsercao do %d causou desequilibrio. RSE executada", chave);
+            //         return rotacaoEsq(no);
+            //     }else{
+            //         printf("\nInsercao do %d causou desequilibrio. RDD executada", chave);
+            //         no->dir = rotacaoDir(no); // Rotacao dupla a direita
+            //         return rotacaoEsq(no);
+            //     }
+            // }
             return no;
         }
 
         void emOrdem(No* no){
             if(no!=NULL){
                 emOrdem(no->esq);
-                cout << no->chave << " ";
+                cout << no->chave << "(" << fb(no) << ")" << " ";
                 emOrdem(no->dir);
             }
         };
@@ -113,6 +129,13 @@ class Arvore_AVL{
             else{
                 return altura_dir + 1;}
         }
+        
+        int fb(No* no){
+            if (no == NULL) return 0;
+            else{
+                return altura(no->esq) - altura(no->dir);
+            }
+        }
 };
 
 int main(){
@@ -120,6 +143,6 @@ int main(){
     arv.inserir(15);
     arv.inserir(27);
     arv.inserir(49);
-    cout << "\nPercorrendo em ordem: ";
+    cout << "\n\nPercorrendo em ordem" << endl;
     arv.emOrdem(arv.raiz);
 }
