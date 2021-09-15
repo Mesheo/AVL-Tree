@@ -106,14 +106,22 @@ class Arvore_AVL{
                 raiz->dir = inserirNaArvore(raiz->dir, chave);}
 
             /*
-            🔥🔥 AVLZAMENTO 🔥🔥
+                    🔥🔥 AVLZAMENTO 🔥🔥
             Para uma arovre ser AVL seus nós precisam 
             ter fator de balanceamento entre -1 e 1. 
             Portanto, dentro de cada insercao eh necessario
             verificar se precisamos rebalancear (rotacionar os nos)
             */
            
-            // CASOS DE ROTACOES A ESQUERDA ↩
+            /* 
+                CASOS DE ROTACOES A ESQUERDA ↩
+            Esses casos vao ocorrer toda vez que
+            o fator de balanceamento for negativo,
+            ou seja, tiver mais subArvores a direita.
+            Se tenho mais arvores a direita preciso 
+            fazer rotacoes a esquerda..
+            */
+
             if (fator_balanceamento(raiz) < -1){ //desbalanceado pra direita
                 // caso de ROTACAO SIMPLES a ESQUERDA
                 if (fator_balanceamento(raiz->dir) <= -1){ //subArvore direita desbalanceada pra direita = RETA
@@ -128,7 +136,15 @@ class Arvore_AVL{
                 } 
             }   
 
-            // CASOS DE ROTACOES A DIREITA ↪
+            /* 
+                CASOS DE ROTACOES A DIREITA ↪
+            Esses casos vao ocorrer toda vez que
+            o fator de balanceamento for positivo,
+            ou seja, tiver mais subArvores a direita.
+            Se tenho mais arvores a direita preciso 
+            fazer rotacoes a esquerda..
+            */
+           
             if (fator_balanceamento(raiz) > 1){ // desbalanceda pra esquerda
                 // caso de ROTACAO SIMPLES a DIREITA
                 if (fator_balanceamento(raiz->esq) >= 1){ //subArvore esquerda desbalanceada pra esquerda = RETA
