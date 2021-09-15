@@ -84,48 +84,35 @@ class Arvore_AVL{
             //  🔥🔥 AVLZAMENTO 🔥🔥
             // Para uma arovre ser AVL seus nós precisam ter fator de balanceamento entre -1 e 1
             
-            // caso de ROTAÇAO SIMPLES A ESQUERDA
+            // CASOS DE ROTACOES A ESQUERDA ↩
             if (fator_balanceamento(raiz) < -1){ //desbalanceamento pra direita
-                if (fator_balanceamento(raiz->dir) <= -1){ //subArvore direita tambem desbalanceada nessa direcao
+                // caso de ROTACAO SIMPLES 
+                if (fator_balanceamento(raiz->dir) <= -1){ //subArvore direita desbalanceada pra direita = RETA
                     printf("\nReta tendendo ao lado direito... RSE executada no %d(%d)", raiz->chave, fator_balanceamento(raiz));
                     raiz = rotacaoEsq(raiz);
+                }
+                // caso de ROTACAO DUPLA
+                if (fator_balanceamento(raiz->dir) >= 1){ // subArvore direita desbalanceada pra esquerda = JOELHO
+                    printf("\nPO ficou um joelho pra esquerda aqui no %d(%d) Rotacao Dupla executada", raiz->dir->chave, fator_balanceamento(raiz->dir)); 
+                    raiz->dir = rotacaoDir(raiz->dir); // rotacao simples a direita
+                    raiz = rotacaoEsq(raiz);
                 } 
-            }
-                
-            // CASO DE ROTACAO SIMPLES A DIREITA
+            }   
+
+            // CASOS DE ROTACOES A DIREITA ↪
             if (fator_balanceamento(raiz) > 1){ // desbalanceamento pra esquerda
-                if (fator_balanceamento(raiz->esq) >= 1){ //subArvore esquerda tambem desbalanceada nessa direcao
+                // caso de ROTACAO SIMPLES
+                if (fator_balanceamento(raiz->esq) >= 1){ //subArvore esquerda desbalanceada pra esquerda = RETA
                     printf("\nReta tendendo ao lado esquerdo... RSD executada no %d(%d)", raiz->chave, fator_balanceamento(raiz));
                     raiz = rotacaoDir(raiz);
                 }
+                // caso de rotacao DUPLA
+                if (fator_balanceamento(raiz->esq) <= 1){ //subArvore esquerda desbalanceada pra direita = JOELHO
+                    printf("\nPO ficou um joelho pra direita aqui no %d(%d)", raiz->esq->chave, fator_balanceamento(raiz->esq)); 
+                }
             }
-            // else if (desequilibrio > 1){ //subArvore a esquerda ta maior
-            //     if (fator_balanceamento(no->dir) > 0){ //subArvore esquerda tambem maior, portanto uma reta
-            //         printf("\nReta tendendo ao lado esquerdo... RSD executada no %d(%d)", no->chave, fb(no));
-            //         no = rotacaoDir(no);
-            //     } 
-            // }
-            // if (desequilibrio > 1){
-            //     if(chave < no->esq->chave){ // comparando com o descendente esquerdo
-            //         printf("\nInsercao do %d causou desequilibrio... RSD executada.", chave);
-            //         return rotacaoDir(no); // Rotação direita
-            //     }else{
-            //         printf("\nInsercao do %d causou desequilibrio... RDE executada.", chave);
-            //         no->esq = rotacaoEsq(no->esq); // Rotacao dupla a esquerda
-            //         return rotacaoDir(no);
-            //     }
-            // }else if (desequilibrio < -1){
-            //     if (chave < no->dir->chave){ // comparando com o descendente a direita
-            //         printf("\nInsercao do %d causou desequilibrio. RSE executada", chave);
-            //         return rotacaoEsq(no);
-            //     }else{
-            //         printf("\nInsercao do %d causou desequilibrio. RDD executada", chave);
-            //         no->dir = rotacaoDir(no); // Rotacao dupla a direita
-            //         return rotacaoEsq(no);
-            //     }
-            // }
             return raiz;
-        }
+        };
 
         void emOrdem(No* no){
             if(no!=NULL){
@@ -157,10 +144,19 @@ int main(){
     Arvore_AVL arv;
     arv.inserir(15);
     arv.inserir(27);
-    arv.inserir(49);
+    arv.inserir(49); 
+    // deu ruim = RSE
     arv.inserir(10);
     arv.inserir(8);
-    arv.inserir(49);
+    // deu ruim = RSD
+    arv.inserir(67);
+    arv.inserir(59);
+    // deu ruim = RDE
+    arv.inserir(9);
+    arv.inserir(13);
+    arv.inserir(20);
+    arv.inserir(14);
+    // deu ruim = RDD
 
     cout << "\n\nPercorrendo em ordem" << endl;
     arv.emOrdem(arv.raiz);
