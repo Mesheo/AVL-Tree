@@ -80,16 +80,24 @@ class Arvore_AVL{
             else if (chave > no->chave){
                 no->dir = inserirNaArvore(no->dir, chave);}
 
-            // Armazenando Altura e Fator de Desequilibrio da inserção atual
-            no->altura = 1 + maiorValor(altura(no->esq), altura(no->dir));
-            int desequilibrio = fb(no);
+        
             // //  🔥🔥 AVLZAMENTO 🔥🔥
-            if (desequilibrio < -1){ //subArvore a direita ta maior
-                if (fb(no->dir) < 0){ //subArvore direita tambem maior, portanto uma reta
-                    printf("\nArvore desequilibrada, RSE executada no %d(%d)", no->chave, fb(no));
+            if (fator_balanceamento(no) < -1){ //subArvore a direita ta maior
+                if (fator_balanceamento(no->dir) < 0){ //subArvore direita tambem maior, portanto uma reta
+                    printf("\nReta tendendo ao lado direito... RSE executada no %d(%d)", no->chave, fator_balanceamento(no));
                     no = rotacaoEsq(no);
                 } 
             }
+            if (fator_balanceamento(no) == 2){
+                printf("\nReta tendendo ao lado esquerdo... RSD executada no %d(%d)", no->chave, fator_balanceamento(no));
+                no = rotacaoDir(no);
+            }
+            // else if (desequilibrio > 1){ //subArvore a esquerda ta maior
+            //     if (fator_balanceamento(no->dir) > 0){ //subArvore esquerda tambem maior, portanto uma reta
+            //         printf("\nReta tendendo ao lado esquerdo... RSD executada no %d(%d)", no->chave, fb(no));
+            //         no = rotacaoDir(no);
+            //     } 
+            // }
             // if (desequilibrio > 1){
             //     if(chave < no->esq->chave){ // comparando com o descendente esquerdo
             //         printf("\nInsercao do %d causou desequilibrio... RSD executada.", chave);
@@ -115,7 +123,7 @@ class Arvore_AVL{
         void emOrdem(No* no){
             if(no!=NULL){
                 emOrdem(no->esq);
-                cout << no->chave << "(" << fb(no) << ")" << " ";
+                cout << no->chave << "(" << fator_balanceamento(no) << ")" << " ";
                 emOrdem(no->dir);
             }
         };
@@ -130,7 +138,7 @@ class Arvore_AVL{
                 return altura_dir + 1;}
         }
         
-        int fb(No* no){
+        int fator_balanceamento(No* no){
             if (no == NULL) return 0;
             else{
                 return altura(no->esq) - altura(no->dir);
@@ -143,6 +151,9 @@ int main(){
     arv.inserir(15);
     arv.inserir(27);
     arv.inserir(49);
+    arv.inserir(10);
+    arv.inserir(8);
+
     cout << "\n\nPercorrendo em ordem" << endl;
     arv.emOrdem(arv.raiz);
 }
